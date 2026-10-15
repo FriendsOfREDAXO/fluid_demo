@@ -28,7 +28,7 @@ final class Gate
     public const array LIMITS = [
         'challenge' => [30, 3600],
         'start' => [10, 3600],
-        'api' => [120, 300],
+        'api' => [240, 300],   // Design-Vorschau fragt beim Ziehen an Reglern öfter nach
     ];
 
     private static ?bool $valid = null;

@@ -53,7 +53,7 @@ final class Demo
     /** Aktionen, die der Browser sich merkt und bei jeder Anfrage wiederholen lässt */
     public const array WRITES = ['save', 'add', 'move', 'reorder', 'col_move', 'paste', 'duplicate', 'status', 'delete'];
     /** Nur lesende Aktionen (ohne Verlauf, Entwürfe, Aktivität, Seitenbaum – dort stünden Namen der Redaktion und Offline-Seiten) */
-    public const array READS = ['form', 'preview', 'render', 'copy'];
+    public const array READS = ['form', 'preview', 'render', 'copy', 'design'];   // design: nur Vorschau, Speichern (design_save) bleibt gesperrt
     private const int PIN_BASE = 1_900_000_000;
     private const int MAX_OPS = 60;
     private const int MAX_BYTES = 200_000;

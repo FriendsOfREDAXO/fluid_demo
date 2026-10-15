@@ -29,6 +29,13 @@
   const ui = () => document.getElementById('blocks-ui')?.shadowRoot;
   const showReset = () => ui()?.querySelector('[data-notice-event="fluid-demo:reset"]')?.toggleAttribute('hidden', !ops.length);
 
+  // Design-Vorschau: übernommene Werte gelten in diesem Browser für die ganze Demo (alle Seiten)
+  const DESIGN_KEY = 'fluid-demo:design';
+  try { window.fluidDesignInitial = JSON.parse(localStorage.getItem(DESIGN_KEY) || 'null'); } catch { window.fluidDesignInitial = null; }
+  document.addEventListener('fluid:design-keep', (e) => {
+    try { localStorage.setItem(DESIGN_KEY, JSON.stringify(e.detail.values)); } catch { /* */ }
+  });
+
   // Auswahl aus Medienpool/Linkmap gibt es in der Demo nicht (form.js zeigt diesen Hinweis)
   window.fluidPickerOff = 'In der Demo lassen sich keine Bilder und Links aus dem Backend auswählen – auf einer echten Website öffnet sich hier der Medienpool bzw. die Seitenauswahl.';
 
