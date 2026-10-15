@@ -8,7 +8,7 @@ Demo nicht einschaltet, hat keinen Gastzugang.
 
 ## So erleben es Besucher
 
-1. Unten links steht der Knopf **„Demo starten“**.
+1. Der Knopf **„Demo starten“** steht oben im Hinweis-Streifen (falls eingeschaltet) und unten links.
 2. Ein Klick öffnet eine kurze Erklärung. Mit **„Demo starten“** prüft der Browser in ein bis drei Sekunden, dass
    kein Bot klickt. Danach öffnet sich die Seite im Bearbeiten-Modus.
 3. Texte direkt auf der Seite ändern, Blöcke in der Seitenleiste bearbeiten, einfügen, verschieben, verdoppeln,
@@ -27,6 +27,8 @@ Website-Einstellungen, Medienpool und Linkmap, Bildeditor, Seitenbaum, Verlauf, 
    die passenden Knöpfe frei. Das Passwort wird nie gebraucht.
 3. Auf der Website angemeldet: Menü ⋯ → **Website …** → Reiter **Demo**. Dort **„Demo einschalten“** anhaken und
    bei **„Rechte wie Benutzer“** den Benutzer wählen. Optional: Beschriftung des Knopfs und Hinweis in der Leiste.
+4. Für öffentliche Demo-Websites: **„Hinweis „Demo-Website“ für alle Besucher zeigen“** mit eigenem Text und
+   „Betrieben von“ (Name und Adresse). Der Streifen steht ganz oben auf jeder Seite, mit dem Knopf zum Start.
 
 **Ausschalten:** Haken bei „Demo einschalten“ entfernen. Ganz entfernen: `php bin/console addon:uninstall fluid_demo`
 (löscht auch die Einstellungen), danach `composer remove friendsofredaxo/fluid_demo`.
@@ -50,6 +52,10 @@ Wer im Backend angemeldet ist, sieht keinen Demo-Knopf und arbeitet ganz normal.
   - Dazu kommen ein unsichtbares Feld, das nur Bots ausfüllen, und eine Mindestzeit zwischen Öffnen und Start.
   - Danach gibt es ein eigenes, signiertes Cookie (HttpOnly, SameSite=Lax, zwei Stunden). Ohne dieses Cookie gibt es
     keine Leiste und keine Demo-Aktionen.
+- **Feste IDs neuer Blöcke:** Neue Blöcke bekommen in der Demo IDs ab 1 900 000 000, damit sie bei jedem Durchlauf
+  gleich heißen. MariaDB und MySQL 8 heben dabei den Zähler der Tabelle an, und das Zurückrollen nimmt das nicht zurück.
+  Deshalb setzt die Demo den Zähler danach zurück (`ALTER TABLE … AUTO_INCREMENT = 1`). Der Datenbank-Benutzer braucht
+  dafür das Recht ALTER.
 - **Begrenzung je IP:** 30 Aufgaben und 10 Starts je Stunde, 120 Demo-Anfragen je 5 Minuten.
 
 Ein automatisierter Browser, der JavaScript ausführt, kann die Prüfung bestehen. Er bekommt dann nur, was jeder
