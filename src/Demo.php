@@ -251,8 +251,12 @@ final class Demo
 
         return '<style>.fdb{position:relative;z-index:50;padding:.5rem 1rem;background:#fff4d6;color:#3d2e00;border-bottom:1px solid #e9cf86;font:500 .875rem/1.45 system-ui,sans-serif;text-align:center}'
             . '.fdb strong{color:inherit}.fdb a{color:#3d2e00;font-weight:700;text-decoration:underline;text-underline-offset:.15em}.fdb a:focus-visible{outline:2px solid #3d2e00;outline-offset:2px}.fdb__by{white-space:nowrap}'
-            . '@media (prefers-color-scheme:dark){.fdb{background:#3d2e00;color:#fff4d6;border-color:#6b5310}.fdb a{color:#fff4d6}.fdb a:focus-visible{outline-color:#fff4d6}}</style>'
-            . '<div class="fdb" role="note"><strong>Demo:</strong> ' . $e($text) . $by . '</div>';
+            . '@media (prefers-color-scheme:dark){.fdb{background:#3d2e00;color:#fff4d6;border-color:#6b5310}.fdb a{color:#fff4d6}.fdb a:focus-visible{outline-color:#fff4d6}}'
+            . '.fdb__start{display:inline-flex;align-items:center;gap:.4rem;min-height:2rem;margin:.15rem 0 .15rem .75rem;padding:0 .9rem;border:0;border-radius:999px;background:#1d2230;color:#fff;font:700 .875rem/1 system-ui,sans-serif;cursor:pointer;vertical-align:middle}'
+            . '.fdb__start:hover{background:#2b3245}.fdb__start:focus-visible{outline:3px solid #8a96ff;outline-offset:2px}.fdb__start[hidden]{display:none}</style>'
+            . '<div class="fdb" role="note"><strong>Demo:</strong> ' . $e($text) . $by
+            // Knopf zum Start (demo-start.js blendet ihn ein, wenn die Demo startbar ist – ohne JavaScript bleibt er verborgen)
+            . '<button type="button" class="fdb__start" data-fluid-demo-start hidden>' . $e((string) Settings::get('demo_button', '') ?: 'Demo starten') . ' →</button></div>';
     }
 
     private static function gateUrl(): string

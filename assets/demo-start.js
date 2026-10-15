@@ -114,7 +114,10 @@
   const fab = root.querySelector('.fab'), dlg = root.querySelector('dialog'), go = root.querySelector('[data-go]'), status = root.querySelector('.status');
   let opened = 0;
   const say = (t, err = false) => { status.textContent = t; status.classList.toggle('is-error', err); };
-  fab.addEventListener('click', () => { opened = Date.now(); say(''); go.disabled = false; dlg.showModal(); go.focus(); });
+  const open = () => { opened = Date.now(); say(''); go.disabled = false; dlg.showModal(); go.focus(); };
+  fab.addEventListener('click', open);
+  // weitere Startknöpfe auf der Seite (z. B. im Hinweis-Streifen oben): sichtbar machen und verbinden
+  const others = () => document.querySelectorAll('[data-fluid-demo-start]').forEach((b) => { if (b._fd) return; b._fd = true; b.hidden = false; b.addEventListener('click', open); });
   go.addEventListener('click', async () => {
     go.disabled = true;
     say('Einen Moment – Ihr Browser prüft …');
@@ -141,6 +144,6 @@
       go.disabled = false;
     }
   });
-  const mount = () => document.body.append(host);
+  const mount = () => { document.body.append(host); others(); };
   if (document.body) mount(); else document.addEventListener('DOMContentLoaded', mount);
 })();
