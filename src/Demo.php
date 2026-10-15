@@ -61,6 +61,7 @@ final class Demo
     private static ?bool $active = null;
     private static bool $running = false;
     private static int $seq = 0;
+    private static bool $pinned = false;
 
     /** Demo eingeschaltet (Einstellung und Demo-Benutzer vorhanden) */
     public static function enabled(): bool
@@ -169,6 +170,7 @@ final class Demo
         Extension::register(ArticleContentUpdated::NAME, static function (ArticleContentUpdated $ep): void {
             if (self::$running && 'slice_added' === $ep->action && $ep->slice) {
                 Sql::factory()->setQuery('UPDATE rex_article_slice SET id = ? WHERE id = ?', [self::PIN_BASE + ++self::$seq, $ep->slice->id]);
+                self::$pinned = true;
             }
         }, ExtensionLevel::Early);
 
@@ -199,6 +201,7 @@ final class Demo
                     if ($sql->inTransaction()) {
                         $sql->rollBack();
                     }
+                    self::resetCounter();
                     ArticleCache::delete($article->id, $article->languageId);
                 };
                 Extension::register('OUTPUT_FILTER', static function (ExtensionPoint $ep) use ($finish): string {
@@ -284,10 +287,30 @@ final class Demo
         } finally {
             self::$running = false;
             $sql->rollBack();
+            self::resetCounter();
             ArticleCache::delete($article->id, $article->languageId);
         }
 
         return [$result, $st];
+    }
+
+    /**
+     * Zähler für neue Block-IDs zurücksetzen. Die festen IDs neuer Blöcke (PIN_BASE + n) heben bei MariaDB/MySQL 8 den
+     * AUTO_INCREMENT dauerhaft an – das Zurückrollen nimmt das nicht zurück. Ohne Rücksetzen bekämen danach auch echte Blöcke
+     * IDs ab PIN_BASE und die Demo-IDs kollidierten. „= 1“ setzt den Zähler auf die höchste vorhandene ID + 1 (außerhalb der
+     * Transaktion, ALTER TABLE beendet sonst die Transaktion).
+     */
+    private static function resetCounter(): void
+    {
+        if (!self::$pinned) {
+            return;
+        }
+        self::$pinned = false;
+        try {
+            Sql::factory()->setQuery('ALTER TABLE rex_article_slice AUTO_INCREMENT = 1');
+        } catch (Throwable) {
+            // ohne Recht ALTER: Zähler bleibt hoch – neue echte Blöcke liegen dann im Bereich PIN_BASE (siehe README)
+        }
     }
 
     /**
