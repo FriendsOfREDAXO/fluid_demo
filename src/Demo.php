@@ -105,6 +105,11 @@ final class Demo
                     'help' => 'Welche Blöcke Besucher nutzen dürfen, richtet sich nach diesem Benutzer (nur Benutzer ohne Admin-Rechte). Ohne Auswahl bleibt die Demo aus.'],
                 ['name' => 'demo_button', 'label' => 'Beschriftung des Knopfs', 'type' => 'text', 'max' => 40, 'placeholder' => 'Demo starten'],
                 ['name' => 'demo_text', 'label' => 'Hinweis in der Leiste (optional)', 'type' => 'text', 'max' => 160, 'placeholder' => 'Probieren Sie alles aus – Ihre Änderungen bleiben nur in diesem Browser.'],
+                ['name' => 'demo_banner', 'label' => 'Hinweis „Demo-Website“ für alle Besucher zeigen', 'type' => 'bool', 'default' => false,
+                    'help' => 'Ein schmaler Streifen ganz oben auf jeder Seite – z. B. damit niemand die Demo für eine offizielle Website hält.'],
+                ['name' => 'demo_banner_text', 'label' => 'Text des Hinweises', 'type' => 'text', 'max' => 200, 'placeholder' => 'Demo-Website für fluid – keine offizielle Website.'],
+                ['name' => 'demo_operator', 'label' => 'Betrieben von (Name)', 'type' => 'text', 'max' => 80, 'width' => 'half', 'placeholder' => 'z. B. Agentur Muster'],
+                ['name' => 'demo_operator_url', 'label' => 'Betrieben von (Adresse)', 'type' => 'text', 'max' => 200, 'width' => 'half', 'placeholder' => 'https://…'],
             ]]];
         });
 
@@ -205,6 +210,17 @@ final class Demo
             });
         }
 
+        // Hinweis „Demo-Website“ ganz oben auf jeder Seite (für alle, unabhängig davon, ob die Demo gestartet ist)
+        Extension::register('OUTPUT_FILTER', static function (ExtensionPoint $ep): string {
+            $html = (string) $ep->subject;
+            if (!Settings::get('demo_banner', false) || !preg_match('~<body\b[^>]*>~i', $html, $m, PREG_OFFSET_CAPTURE)) {
+                return $html;
+            }
+            $pos = $m[0][1] + \strlen($m[0][0]);
+
+            return substr($html, 0, $pos) . self::banner() . substr($html, $pos);
+        }, ExtensionLevel::Late);
+
         // Knopf „Demo starten“ für Besucher (Demo an, noch nicht gestartet, niemand angemeldet)
         Extension::register('OUTPUT_FILTER', static function (ExtensionPoint $ep): string {
             $html = (string) $ep->subject;
@@ -219,6 +235,21 @@ final class Demo
 
             return substr($html, 0, $pos) . $tag . substr($html, $pos);
         }, ExtensionLevel::Late);
+    }
+
+    /** Streifen „Demo-Website … Betrieben von …“ (eigene Stile, lesbar auf jedem Kit) */
+    public static function banner(): string
+    {
+        $e = static fn (string $v) => htmlspecialchars($v, ENT_QUOTES);
+        $text = trim((string) Settings::get('demo_banner_text', '')) ?: 'Demo-Website für fluid – keine offizielle Website.';
+        $name = trim((string) Settings::get('demo_operator', ''));
+        $url = trim((string) Settings::get('demo_operator_url', ''));
+        $by = '' === $name ? '' : ' <span class="fdb__by">Betrieben von ' . (preg_match('~^https?://~', $url) ? '<a href="' . $e($url) . '" rel="noopener">' . $e($name) . '</a>' : $e($name)) . '</span>';
+
+        return '<style>.fdb{position:relative;z-index:50;padding:.5rem 1rem;background:#fff4d6;color:#3d2e00;border-bottom:1px solid #e9cf86;font:500 .875rem/1.45 system-ui,sans-serif;text-align:center}'
+            . '.fdb strong{color:inherit}.fdb a{color:#3d2e00;font-weight:700;text-decoration:underline;text-underline-offset:.15em}.fdb a:focus-visible{outline:2px solid #3d2e00;outline-offset:2px}.fdb__by{white-space:nowrap}'
+            . '@media (prefers-color-scheme:dark){.fdb{background:#3d2e00;color:#fff4d6;border-color:#6b5310}.fdb a{color:#fff4d6}.fdb a:focus-visible{outline-color:#fff4d6}}</style>'
+            . '<div class="fdb" role="note"><strong>Demo:</strong> ' . $e($text) . $by . '</div>';
     }
 
     private static function gateUrl(): string
