@@ -1,6 +1,6 @@
 {
     "name": "friendsofredaxo/fluid_demo",
-    "description": "Demo für fluid (REDAXO 6): Besucher bearbeiten die Website zum Ausprobieren – nach Klick auf „Demo starten“ und Bot-Prüfung, gespeichert wird nichts",
+    "description": "Ergänzung für das REDAXO-6-AddOn fluid: Demo-Modus – Besucher bearbeiten die Website zum Ausprobieren – nach Klick auf „Demo starten“ und Bot-Prüfung, gespeichert wird nichts",
     "type": "redaxo-addon",
     "license": "MIT",
     "keywords": ["redaxo", "redaxo-addon", "redaxo6", "fluid", "demo", "frontend-editing"],

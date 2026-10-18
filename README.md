@@ -1,10 +1,15 @@
-# fluid_demo – Demo für fluid
+# fluid_demo – Ergänzung für fluid
 
-Ein AddOn für [fluid](https://github.com/FriendsOfREDAXO/fluid) (REDAXO 6). Besucher probieren das Bearbeiten auf der
-Website aus, ohne Anmeldung und ohne dass etwas gespeichert wird. Gedacht für Vorführungen und Demo-Websites.
+**fluid_demo ist eine Ergänzung für das REDAXO-6-AddOn [fluid](https://github.com/FriendsOfREDAXO/fluid)** und läuft
+nur zusammen mit fluid. Es macht aus einer fluid-Website eine Demo zum Ausprobieren: Besucher bearbeiten die Seiten
+ohne Anmeldung, und nichts davon wird gespeichert. Gedacht für Vorführungen, Schulungen und öffentliche Demo-Websites.
 
-fluid selbst enthält keine Demo. Wer sie will, installiert dieses AddOn zusätzlich. Wer es nicht installiert oder die
-Demo nicht einschaltet, hat keinen Gastzugang.
+fluid selbst bringt keine Demo mit und öffnet ohne diese Ergänzung keinen Gastzugang. Wer die Demo nicht braucht,
+installiert fluid_demo einfach nicht.
+
+**Voraussetzungen:** REDAXO 6 (`redaxo/core` 6.x), [fluid](https://github.com/FriendsOfREDAXO/fluid) 1.x, PHP 8.5.
+
+> REDAXO 6 und fluid sind noch in Entwicklung. Es kann sich noch einiges ändern.
 
 ## So erleben es Besucher
 
