@@ -30,8 +30,13 @@ Website-Einstellungen, Medienpool und Linkmap, Bildeditor, Seitenbaum, Verlauf, 
 4. Für öffentliche Demo-Websites: **„Hinweis „Demo-Website“ für alle Besucher zeigen“** mit eigenem Text und
    „Betrieben von“ (Name und Adresse). Der Streifen steht ganz oben auf jeder Seite, mit dem Knopf zum Start.
 
-**Ausschalten:** Haken bei „Demo einschalten“ entfernen. Ganz entfernen: `php bin/console addon:uninstall fluid_demo`
-(löscht auch die Einstellungen), danach `composer remove friendsofredaxo/fluid_demo`.
+**Ausschalten:** Haken bei „Demo einschalten“ entfernen.
+
+**Ganz entfernen:**
+1. Zuerst die Demo ausschalten. Die Einstellungen im Reiter **Demo** gehören zu fluid und bleiben erhalten. So startet
+   die Demo nicht von selbst wieder, falls das AddOn später erneut installiert wird.
+2. `composer remove friendsofredaxo/fluid_demo`
+3. `php bin/console migrate:cleanup` entfernt Schlüssel und Cache des AddOns.
 
 Wer im Backend angemeldet ist, sieht keinen Demo-Knopf und arbeitet ganz normal.
 

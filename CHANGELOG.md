@@ -9,3 +9,5 @@
     zurückgerollt wird.
   - Gäste sehen nur Öffentliches: Live-Fassung, ohne Offline-Blöcke, ohne interne Einstellungen.
   - Hervorgegangen aus einem Entwurf, der zunächst direkt in fluid steckte.
+- Angepasst an REDAXO-Core `cf598c1`: kein `uninstall()` mehr. Entfernen per `composer remove` und
+  `console migrate:cleanup`, die Demo vorher ausschalten (README).
