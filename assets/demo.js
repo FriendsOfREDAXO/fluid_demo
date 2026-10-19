@@ -29,11 +29,24 @@
   const ui = () => document.getElementById('blocks-ui')?.shadowRoot;
   const showReset = () => ui()?.querySelector('[data-notice-event="fluid-demo:reset"]')?.toggleAttribute('hidden', !ops.length);
 
-  // Design-Vorschau: übernommene Werte gelten in diesem Browser für die ganze Demo (alle Seiten)
-  const DESIGN_KEY = 'fluid-demo:design';
+  // Design-Vorschau: übernommene Werte gelten in diesem Browser für die ganze Demo (alle Seiten), je Kit getrennt
+  const DESIGN_KEY = 'fluid-demo:design' + (cfg.demo.kit && cfg.demo.kit !== 'fluid' ? ':' + cfg.demo.kit : '');
   try { window.fluidDesignInitial = JSON.parse(localStorage.getItem(DESIGN_KEY) || 'null'); } catch { window.fluidDesignInitial = null; }
   document.addEventListener('fluid:design-keep', (e) => {
     try { localStorage.setItem(DESIGN_KEY, JSON.stringify(e.detail.values)); } catch { /* */ }
+  });
+
+  // Kit ausprobieren: zum nächsten Kit wechseln (Cookie für den Server, gilt nur in diesem Browser und nur in der Demo)
+  const KIT_COOKIE = cfg.demo.kitCookie || 'fluid_demo_kit';
+  const setKitCookie = (value, maxAge) => {
+    document.cookie = `${KIT_COOKIE}=${encodeURIComponent(value)}; path=/; max-age=${maxAge}; SameSite=Lax${location.protocol === 'https:' ? '; Secure' : ''}`;
+  };
+  document.addEventListener('fluid-demo:kit', () => {
+    const kits = Array.isArray(cfg.demo.kits) ? cfg.demo.kits : [];
+    if (kits.length < 2) return;
+    const next = kits[(kits.indexOf(cfg.demo.kit) + 1) % kits.length];
+    setKitCookie(next, 7200);
+    location.reload();
   });
 
   // Auswahl aus Medienpool/Linkmap gibt es in der Demo nicht (form.js zeigt diesen Hinweis)
@@ -95,6 +108,7 @@
     if (ask && !(await ask({ title: 'Demo beenden?', body: 'Ihre Änderungen werden verworfen, die Seite erscheint wieder wie für alle Besucher.', ok: 'Beenden' }))) return;
     window.FluidEditor?.discard?.();
     try { Object.keys(localStorage).filter((k) => k.startsWith('fluid-demo:')).forEach((k) => localStorage.removeItem(k)); } catch { /* */ }
+    setKitCookie('', 0);
     try { await fetch(cfg.demo.gate + 'end', { method: 'POST', credentials: 'same-origin' }); } catch { /* */ }
     location.href = String(cfg.viewUrl).replace(/&amp;/g, '&');
   });

@@ -9,5 +9,7 @@
     zurückgerollt wird.
   - Gäste sehen nur Öffentliches: Live-Fassung, ohne Offline-Blöcke, ohne interne Einstellungen.
   - Hervorgegangen aus einem Entwurf, der zunächst direkt in fluid steckte.
+- Kit ausprobieren: Knopf „Kit: …“ in der Leiste (ab zwei Kits) wechselt das Kit nur im eigenen Browser (Cookie
+  `fluid_demo_kit`, ausgewertet über `FLUID_KIT` nur in einer gestarteten Demo); Design-Vorschau je Kit.
 - Angepasst an REDAXO-Core `cf598c1`: kein `uninstall()` mehr. Entfernen per `composer remove` und
   `console migrate:cleanup`, die Demo vorher ausschalten (README).

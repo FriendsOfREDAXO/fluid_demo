@@ -6,6 +6,7 @@ use FriendsOfRedaxo\Fluid\Api;
 use FriendsOfRedaxo\Fluid\ApiError;
 use FriendsOfRedaxo\Fluid\BlockModule;
 use FriendsOfRedaxo\Fluid\Editing;
+use FriendsOfRedaxo\Fluid\Kit;
 use FriendsOfRedaxo\Fluid\FluidAddon;
 use FriendsOfRedaxo\Fluid\LayoutBlock;
 use FriendsOfRedaxo\Fluid\Search\Search;
@@ -57,6 +58,9 @@ final class Demo
     private const int PIN_BASE = 1_900_000_000;
     private const int MAX_OPS = 60;
     private const int MAX_BYTES = 200_000;
+
+    /** Cookie mit dem Kit, das ein Besucher in der Demo ausprobiert */
+    public const string KIT_COOKIE = 'fluid_demo_kit';
 
     private static ?bool $active = null;
     private static bool $running = false;
@@ -135,6 +139,14 @@ final class Demo
             return self::user();
         });
 
+        // Kit zum Ausprobieren (Knopf „Kit: …“ in der Leiste): nur in einer gestarteten Demo, nur in diesem Browser.
+        // Unbekannte Schlüssel verwirft fluid selbst (Kit::active fällt dann auf die Einstellung zurück).
+        Extension::register('FLUID_KIT', static function (ExtensionPoint $ep): string {
+            $kit = (string) ($_COOKIE[self::KIT_COOKIE] ?? '');
+
+            return self::active() && preg_match('~^[a-z][a-z0-9-]{1,30}$~', $kit) ? $kit : (string) $ep->subject;
+        });
+
         // Aktionen des Editors für Gäste übernehmen
         Extension::register('FLUID_API_ACTION', static function (ExtensionPoint $ep): mixed {
             if (!$ep->getParam('guest') || !self::active()) {
@@ -157,9 +169,14 @@ final class Demo
             /** @var Article $article */
             $article = $ep->getParam('article');
             $addon = DemoAddon::instance();
+            // mehrere Kits: Knopf „Kit: …“ schaltet zum nächsten (Cookie, nur dieser Browser)
+            $kits = Kit::options();
+            $kit = Kit::active()->key();
+            $kitButton = \count($kits) > 1 ? [['label' => 'Kit: ' . ($kits[$kit] ?? $kit), 'event' => 'fluid-demo:kit']] : [];
             $cfg['notice'] = ['tag' => 'Demo', 'text' => (string) Settings::get('demo_text', '') ?: 'Probieren Sie alles aus – Ihre Änderungen bleiben nur in diesem Browser.',
-                'buttons' => [['label' => 'Zurücksetzen', 'event' => 'fluid-demo:reset', 'hidden' => true], ['label' => 'Demo beenden', 'event' => 'fluid-demo:end']]];
-            $cfg['demo'] = ['key' => 'fluid-demo:' . $article->id . ':' . $article->languageId, 'gate' => self::gateUrl(), 'maxOps' => self::MAX_OPS];
+                'buttons' => [...$kitButton, ['label' => 'Zurücksetzen', 'event' => 'fluid-demo:reset', 'hidden' => true], ['label' => 'Demo beenden', 'event' => 'fluid-demo:end']]];
+            $cfg['demo'] = ['key' => 'fluid-demo:' . $article->id . ':' . $article->languageId, 'gate' => self::gateUrl(), 'maxOps' => self::MAX_OPS,
+                'kit' => $kit, 'kits' => array_keys($kits), 'kitCookie' => self::KIT_COOKIE];
             $cfg['scripts'] = [...(array) ($cfg['scripts'] ?? []), $addon->getAssetsUrl('demo.js') . '?v=' . DemoAddon::version('demo.js')];
             $cfg['can'] = ['publish' => true, 'version' => true] + (array) ($cfg['can'] ?? []);
 

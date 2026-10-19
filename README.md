@@ -20,6 +20,8 @@ installiert fluid_demo einfach nicht.
    löschen, online/offline schalten: alles wie echt. **„Speichern“** und Neuladen funktionieren.
 4. Die Änderungen bleiben **nur in diesem Browser**. Andere Besucher sehen davon nichts.
 5. **„Zurücksetzen“** verwirft die Änderungen an der Seite, **„Demo beenden“** schließt die Demo.
+6. Gibt es mehrere Kits (z. B. „Fluid“ und „NativeCSS“), schaltet **„Kit: …“** in der Leiste zum nächsten – nur in
+   diesem Browser, die Website bleibt für alle anderen unverändert. Design-Vorschauen merkt sich die Demo je Kit.
 
 Gesperrt sind: Veröffentlichen (zeigt nur einen Hinweis), Seiten anlegen, Seiteneinstellungen, Design,
 Website-Einstellungen, Medienpool und Linkmap, Bildeditor, Seitenbaum, Verlauf, Postfach.
